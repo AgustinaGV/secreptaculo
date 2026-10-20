@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Qué es
 
-`secreptáculo` es una pieza de tecnología multimedial: un sensor de proximidad ultrasónico conectado a una Raspberry Pi que detecta cuándo una persona se acerca o se aleja y, en función de eso, dispara y corta una "grabación". Hoy la grabación es simulada: el script solo imprime mensajes de estado por consola (`INICIO GRABACIÓN`, cuenta regresiva, `FIN GRABACIÓN`, duración). No hay captura real de audio/video todavía; ese es el punto de extensión natural.
+`secreptáculo` es una pieza de tecnología multimedial: un sensor de proximidad ultrasónico conectado a una Raspberry Pi que detecta cuándo una persona se acerca o se aleja y, en función de eso, dispara y corta una "grabación". La grabación de audio es real: al arrancar se lanza `arecord` como subproceso (placa de sonido USB, `DISPOSITIVO_ENTRADA_AUDIO`) y cada secreto se guarda como `.wav` en `src/audios/`; al cortar se termina el proceso con `terminate()` para que el archivo quede bien cerrado. Además imprime mensajes de estado por consola (`INICIO GRABACIÓN`, cuenta regresiva, `FIN GRABACIÓN`, duración). Todavía no hay salida de audio. Hay un segundo sensor ultrasónico (`trigger=GPIO17`, `echo=GPIO27`), ya conectado y funcionando a nivel hardware (con divisor de tensión en echo), cuya incorporación al script está en curso, cuya función es disparar la reproducción de uno de los `.wav` ya grabados, elegido al azar. El parlante todavía no está cableado: ese es el punto de extensión natural.
 
 Todo el proyecto es un único archivo: [src/secreptaculo.py](src/secreptaculo.py).
 
 ## Ejecutar
 
-Corre en una Raspberry Pi con un sensor tipo HC-SR04 cableado a `trigger=GPIO23` y `echo=GPIO24` (ver línea 5).
+Corre en una Raspberry Pi con un sensor tipo HC-SR04 cableado a `trigger=GPIO23` y `echo=GPIO24` (ver línea 8).
 
 ```
 python src/secreptaculo.py
@@ -35,7 +35,7 @@ Hay tres zonas de distancia: dentro de `RANGO_GRABACION_CM` ("cerca"), entre ese
 
 ### Parámetros
 
-Los cinco parámetros de comportamiento son constantes en mayúsculas al tope del archivo (líneas 7-11): intervalo de lectura, los dos umbrales de distancia, y los dos tiempos de confirmación/corte. Ajustar la sensibilidad de la pieza se hace ahí, no tocando la lógica.
+Los cinco parámetros de comportamiento son constantes en mayúsculas al tope del archivo (líneas 10-14): intervalo de lectura, los dos umbrales de distancia, y los dos tiempos de confirmación/corte. Ajustar la sensibilidad de la pieza se hace ahí, no tocando la lógica.
 
 ### Patrón de impresión por cambio
 
